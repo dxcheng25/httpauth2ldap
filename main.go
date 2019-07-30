@@ -116,6 +116,7 @@ func handleHttpAuthReq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(AuthServer, authserver)
 	w.Header().Set(AuthPort, authport)
 	w.WriteHeader(http.StatusOK)
+	log.Print("Authentication was successful.")
 }
 
 func main() {
