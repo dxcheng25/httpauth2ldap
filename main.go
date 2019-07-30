@@ -75,7 +75,7 @@ func authViaLdap(cred *LdapCredential) (bool, error) {
 
 	err = l.Bind(sresp.Entries[0].DN, cred.pwd)
 	if err != nil {
-		log.Print("Unable to authenticate user: %s with password: %s", cred.usr, cred.pwd)
+		log.Printf("Unable to authenticate user: %s with password: %s", cred.usr, cred.pwd)
 		return false, err
 	}
 
@@ -83,18 +83,19 @@ func authViaLdap(cred *LdapCredential) (bool, error) {
 }
 
 func handleHttpAuthReq(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Received authentication request: %s", r.Header)
 	authm := r.Header.Get(AuthMethod)
 	if authm != "plain" {
 		authFailed(w, fmt.Sprintf("Unsupported authentication method %s", authm))
 		return
-  }
-  
-  authserver := r.Header.Get(AuthServer)
-  authport := r.Header.Get(AuthPort)
-  if authserver == "" || authport == "" {
-    authFailed(w, "Must supply Auth-Server and Auth-Port via HTTP Header.")
-    return
-  }
+	}
+
+	authserver := r.Header.Get(AuthServer)
+	authport := r.Header.Get(AuthPort)
+	if authserver == "" || authport == "" {
+		authFailed(w, "Must supply Auth-Server and Auth-Port via HTTP Header.")
+		return
+	}
 
 	cred := LdapCredential{
 		usr:      r.Header.Get(AuthUser),
@@ -113,6 +114,7 @@ func handleHttpAuthReq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(AuthStatus, "OK")
 	w.Header().Set(AuthServer, authserver)
 	w.Header().Set(AuthPort, authport)
+	w.WriteHeader(http.StatusOK)
 }
 
 func main() {
