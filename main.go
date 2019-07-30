@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"gopkg.in/ldap.v3"
 )
@@ -37,6 +38,7 @@ type LdapCredential struct {
 	bindPwd  string
 	usr      string
 	pwd      string
+	domain   string
 }
 
 func authViaLdap(cred *LdapCredential) (bool, error) {
@@ -98,8 +100,15 @@ func handleHttpAuthReq(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	authud := strings.Split(r.Header.Get(AuthUser), "@")
+	if len(authud) != 2 {
+		authFailed(w, "Username must contain both user id and domain.")
+		return
+	}
+
 	cred := LdapCredential{
-		usr:      r.Header.Get(AuthUser),
+		usr:      authud[0],
+		domain:   authud[1],
 		pwd:      r.Header.Get(AuthPass),
 		ldapAddr: r.Header.Get(XLdapURL),
 		baseDn:   r.Header.Get(XLdapBaseDN),
