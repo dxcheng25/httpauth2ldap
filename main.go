@@ -15,7 +15,7 @@ const (
 	AuthStatus    = "Auth-Status"
 	AuthUser      = "Auth-User"
 	AuthPass      = "Auth-Pass"
-	AuthMethod    = "AuthMethod"
+	AuthMethod    = "Auth-Method"
 	XLdapURL      = "X-Ldap-URL"
 	XLdapBaseDN   = "X-Ldap-BaseDN"
 	XLdapBindDN   = "X-Ldap-BindDN"
