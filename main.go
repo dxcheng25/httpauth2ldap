@@ -25,6 +25,7 @@ const (
 )
 
 func authFailed(w http.ResponseWriter, err string) {
+	log.Printf("Failed authentication due to: %s", err)
 	w.Header().Add(AuthStatus, err)
 	w.WriteHeader(http.StatusOK)
 }
